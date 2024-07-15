@@ -7,7 +7,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         function hey() {
-            alert('연결완료');
+            let url = 'http://spartacodingclub.shop/sparta_api/seoulair';
+            fetch(url).then(res => res.json()).then(data => {
+                let rows = data['RealtimeCityAir']['row'];
+                rows.forEach(a => {
+                    let gu_name = a['MSRSTE_NM'];
+                    let gu_mise = a['IDEX_NM'];
+                    console.log(gu_name, gu_mise);
+                });
+            })
         }
     </script>
 </head>

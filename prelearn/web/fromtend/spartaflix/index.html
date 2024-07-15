@@ -32,6 +32,7 @@
       width: 1200px;
       margin: 20px auto 20px auto;
     }
+
     .mypostingbox {
       width: 500px;
       margin: 20px auto 20px auto;
@@ -39,25 +40,35 @@
       padding: 20px;
       border-radius: 5px;
     }
-    .form-floating >input {
+
+    .form-floating>input {
       background-color: transparent;
       color: white;
     }
-    .form-floating >label {
+
+    .form-floating>label {
       background-color: transparent;
       color: white;
     }
-    .input-group > label {
+
+    .input-group>label {
       background-color: transparent;
       color: white;
     }
-    .mypostingbox > button {
+
+    .mypostingbox>button {
       width: 100px;
     }
-     
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
+    $(document).ready(function () {
+      let url = "http://spartacodingclub.shop/sparta_api/weather/seoul";
+      fetch(url).then(res => res.json()).then(data => {
+        let temp = data['temp'];
+        $('#temparature').text(temp);
+      })
+    })
     function openclose() {
       $('#postingbox').toggle();
     }
@@ -100,6 +111,7 @@
           <li><a href="#" class="nav-link px-2 text-white">시리즈</a></li>
           <li><a href="#" class="nav-link px-2 text-white">영화</a></li>
           <li><a href="#" class="nav-link px-2 text-white">내가 찜한 시리즈</a></li>
+          <li><a href="#" class="nav-link px-2 text-white">현재 기온: <span id="temparature">20.00</span>도</a></li>
         </ul>
 
         <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
@@ -151,7 +163,7 @@
     </div>
     <button type="button" class="btn btn-danger" onclick="makeCard()">기록하기</button>
   </div>
-  <div class="mycards" id = "card">
+  <div class="mycards" id="card">
     <div class="row row-cols-1 row-cols-md-4 g-4">
       <div class="col">
         <div class="card">
