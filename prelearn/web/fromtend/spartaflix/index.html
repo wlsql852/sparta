@@ -61,25 +61,69 @@
     }
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script>
-    $(document).ready(function () {
-      let url = "http://spartacodingclub.shop/sparta_api/weather/seoul";
-      fetch(url).then(res => res.json()).then(data => {
-        let temp = data['temp'];
-        $('#temparature').text(temp);
-      })
-    })
-    function openclose() {
-      $('#postingbox').toggle();
-    }
-    function makeCard() {
+  <script type="module">
+    // firebase 초기 세팅 코드
+    // Firebase SDK 라이브러리 가져오기
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+
+    // Firebase 구성 정보 설정 - firebase에서 가져오기
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQVeLoFYFOP47ylpl5zyrSEUZeb_L4MBQ",
+      authDomain: "sparta-a64eb.firebaseapp.com",
+      projectId: "sparta-a64eb",
+      storageBucket: "sparta-a64eb.appspot.com",
+      messagingSenderId: "497484702645",
+      appId: "1:497484702645:web:c5819b4ffe120cffc02ffc",
+      measurementId: "G-Z5WV5SS64R"
+    };
+
+
+    // Firebase 인스턴스 초기화
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // firebase 초기 세팅 코드 끝
+
+    // 데이터 입력 및 저장
+    $("#postingbtn").click(async function () {
       let image = $('#image').val();
       let title = $('#title').val();
-      let comment = $('#comment').val();
       let star = $('#star').val();
+      let comment = $('#comment').val();
+
+      let doc = {
+        'image': image,
+        'title': title,
+        'star': star,
+        'comment': comment
+      };
+      await addDoc(collection(db, "movies"), doc);
+      alert('저장완료!');
+      window.location.reload();  //새로 고침
+    })
+
+    let url = "http://spartacodingclub.shop/sparta_api/weather/seoul";
+    fetch(url).then(res => res.json()).then(data => {
+      let temp = data['temp'];
+      $('#temparature').text(temp);
+    })
+
+    //데이터 읽기 스켈레톤 코드
+    let docs = await getDocs(collection(db, "movies"));
+    docs.forEach((doc) => {
+      let row = doc.data();
+
+      let image = row['image'];
+      let title = row['title'];
+      let comment = row['comment'];
+      let star = row['star'];
 
       let temp_html = `
-      <div class="col">
+            <div class="col">
         <div class="card">
           <img src="${image}"
             class="card-img-top" alt="...">
@@ -90,8 +134,38 @@
           </div>
         </div>
       </div>`;
+
+      $('#card').append(temp_html);  //카드 추가 생성
+    });
+
+
+    function openclose() {
+      $('#postingbox').toggle();
+    }
+    function makeCard() {
+      let image = $('#image').val();
+      let title = $('#title').val();
+      let comment = $('#comment').val();
+      let star = $('#star').val();
+
+      let temp_html = `
+            <div class="col">
+        <div class="card">
+          <img src="${image}"
+            class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">${title}</h5>
+            <p class="card-text">${star}</p>
+            <p class="card-text">${comment}</p>
+          </div>
+        </div>
+      </div>`;
+
       $('#card').append(temp_html);
     }
+    $('#savebtn').click(async function () {
+      $('#postingbox').toggle();
+    })
   </script>
 </head>
 
@@ -132,7 +206,7 @@
         <h1 class="display-5 fw-bold">킹덤</h1>
         <p class="col-md-8 fs-4">병든 왕을 둘러싸고 흉흉한 소문이 떠돈다. 어둠에 뒤덮인 조선, 기이한 역병에 신음하는 산하. 정체 모를 악에 맞서 백성을 구원할 희망은 오직
           세자뿐이다.</p>
-        <button type="button" class="btn btn-outline-light" onclick="openclose()">영화 기록하기</button>
+        <button type="button" class="btn btn-outline-light" id="savebtn">영화 기록하기</button>
         <button type="button" class="btn btn-outline-light">상세 정보</button>
       </div>
     </div>
@@ -161,10 +235,10 @@
       <input type="email" class="form-control" id="comment" placeholder="추천 이유">
       <label for="floatingInput">추천 이유</label>
     </div>
-    <button type="button" class="btn btn-danger" onclick="makeCard()">기록하기</button>
+    <button type="button" class="btn btn-danger" id="postingbtn">기록하기</button>
   </div>
-  <div class="mycards" id="card">
-    <div class="row row-cols-1 row-cols-md-4 g-4">
+  <div class="mycards" >
+    <div class="row row-cols-1 row-cols-md-4 g-4" id="card">
       <div class="col">
         <div class="card">
           <img src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
