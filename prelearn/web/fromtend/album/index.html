@@ -108,7 +108,7 @@
             let title = $('#title').val();
             let content = $('#content').val();
             let date = $('#date').val();
-
+            
             let doc = {
                 'image': image,
                 'title': title,
@@ -119,13 +119,13 @@
             alert('저장완료!');
             window.location.reload();  //새로 고침
         })
-
+        
         let url = "http://spartacodingclub.shop/sparta_api/seoulair";
         fetch(url).then(res => res.json()).then(data => {
             let mise = data['RealtimeCityAir']['row'][0]['IDEX_NM'];
             $('#msg').text(mise);
         })
-
+        
         //데이터 읽기 스켈레톤 코드
         let docs = await getDocs(collection(db, "albums"));
         docs.forEach((doc) => {
